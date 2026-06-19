@@ -27,13 +27,97 @@ font-size:18px;
 </head>
 <body>
 
-<h2>📍 مشاركة الموقع</h2>
+<h2>📍 تتبع موقع المستأجر</h2>
 
-<button onclick="getLocation()">إرسال موقعي</button>
+<input id="customerName" placeholder="اسم الزبون">
 
+<br><br>
+
+<select id="hours">
+<option value="1">ساعة</option>
+<option value="6">6 ساعات</option>
+<option value="12">12 ساعة</option>
+<option value="24">24 ساعة</option>
+<option value="48">48 ساعة</option>
+</select>
+
+<br><br>
+
+<button onclick="startTracking()">بدء التتبع</button>
+
+<div id="timer"></div>
 <div id="result"></div>
 
 <script>
+
+let watchId;
+
+function startTracking(){
+
+const hours = Number(document.getElementById("hours").value);
+
+const endTime = Date.now() + (hours * 60 * 60 * 1000);
+
+updateTimer(endTime);
+
+setInterval(()=>{
+updateTimer(endTime);
+},1000);
+
+watchId = navigator.geolocation.watchPosition(
+
+(position)=>{
+
+const lat = position.coords.latitude;
+const lng = position.coords.longitude;
+
+document.getElementById("result").innerHTML = `
+<p>📍 الموقع الحالي</p>
+
+<a target="_blank"
+href="https://www.google.com/maps?q=${lat},${lng}">
+فتح الموقع على الخريطة
+</a>
+
+<p>${lat}</p>
+<p>${lng}</p>
+`;
+
+},
+
+(error)=>{
+alert("تم رفض مشاركة الموقع");
+}
+
+);
+
+}
+
+function updateTimer(endTime){
+
+const remaining = endTime - Date.now();
+
+if(remaining <= 0){
+
+document.getElementById("timer").innerHTML =
+"انتهت مدة التتبع";
+
+navigator.geolocation.clearWatch(watchId);
+
+return;
+}
+
+const h = Math.floor(remaining / 3600000);
+const m = Math.floor((remaining % 3600000) / 60000);
+const s = Math.floor((remaining % 60000) / 1000);
+
+document.getElementById("timer").innerHTML =
+`⏳ الوقت المتبقي: ${h}:${m}:${s}`;
+
+}
+
+</script>
+
 
 function getLocation(){
 

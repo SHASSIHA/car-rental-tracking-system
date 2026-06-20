@@ -1,52 +1,98 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تتبع موقع المستأجر</title>
-
+<title>شاصيها | تتبع المستأجر</title>
 <style>
 body{
+margin:0;
 font-family:Arial,sans-serif;
+background:linear-gradient(180deg,#ffffff,#f3f4f6);
 text-align:center;
-padding:30px;
-background:#f5f5f5;
 }
-
-input,select{
-padding:10px;
-font-size:16px;
-margin:5px;
+.logo-wrap{
+position:relative;
+padding-top:25px;
 }
-
-button{
-padding:15px 30px;
-font-size:18px;
-cursor:pointer;
+.glow{
+width:170px;height:170px;
+background:#ff6a00;
+opacity:.25;
+border-radius:50%;
+position:absolute;
+left:50%;
+top:10px;
+transform:translateX(-50%);
+filter:blur(45px);
 }
-
-#timer{
-margin-top:20px;
+.logo{
+width:140px;
+position:relative;
+z-index:2;
+}
+.subtitle{
 font-size:22px;
 font-weight:bold;
+color:#374151;
+margin-top:10px;
 }
-
-#result{
-margin-top:20px;
+.card{
+background:#1f2937;
+color:white;
+margin:20px;
+padding:25px;
+border-radius:22px;
+box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+input,select{
+width:90%;
+padding:14px;
+margin:8px 0;
+border-radius:12px;
+border:none;
+font-size:16px;
+}
+button{
+width:90%;
+padding:15px;
+background:#ff6a00;
+border:none;
+border-radius:12px;
 font-size:18px;
+font-weight:bold;
+color:white;
+cursor:pointer;
+}
+#timer{font-size:24px;font-weight:bold;margin-top:15px;color:#ffb067}
+.status{margin-top:10px;font-weight:bold}
+a.mapbtn{
+display:block;
+background:#374151;
+color:white;
+padding:14px;
+border-radius:12px;
+text-decoration:none;
+margin-top:15px;
+}
+footer{
+margin-top:30px;
+padding:20px;
+color:#6b7280;
 }
 </style>
-
 </head>
 <body>
 
-<h2>📍 تتبع موقع المستأجر</h2>
+<div class="logo-wrap">
+<div class="glow"></div>
+<img src="./logo.png" class="logo">
+</div>
 
+<div class="subtitle">شاصيها | تتبع المستأجر</div>
+
+<div class="card">
 <input id="customerName" placeholder="اسم الزبون">
-
-<br><br>
-
 <select id="hours">
 <option value="1">ساعة</option>
 <option value="6">6 ساعات</option>
@@ -55,102 +101,85 @@ font-size:18px;
 <option value="48">48 ساعة</option>
 </select>
 
-<br><br>
-
-<button onclick="startTracking()">بدء التتبع</button>
+<button id="startBtn" onclick="startTracking()">📍 بدء التتبع</button>
 
 <div id="timer"></div>
+<div class="status" id="status"></div>
 <div id="result"></div>
+</div>
+
+<footer>Powered by <b>SHASSIHA</b> © 2026</footer>
 
 <script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwvcvZDRe5lTLvm-ElFzvsZEEHHHgSnxk_KBquwHfr1qfeo4Rm7T6-gSspukZBWd38X/exec";
 
-let watchId;
+let watchId=null;
+let lastSent=0;
 
 function startTracking(){
-
 if(!navigator.geolocation){
 alert("المتصفح لا يدعم GPS");
 return;
 }
 
-const hours = Number(document.getElementById("hours").value);
+document.getElementById("startBtn").disabled=true;
+document.getElementById("status").innerHTML="🟢 جاري التتبع";
 
-const endTime = Date.now() + (hours * 60 * 60 * 1000);
+const hours=Number(document.getElementById("hours").value);
+const endTime=Date.now()+hours*60*60*1000;
 
-updateTimer(endTime);
+setInterval(()=>updateTimer(endTime),1000);
 
-setInterval(()=>{
-updateTimer(endTime);
-},1000);
+watchId=navigator.geolocation.watchPosition((position)=>{
 
-watchId = navigator.geolocation.watchPosition(
+const lat=position.coords.latitude;
+const lng=position.coords.longitude;
 
-(position)=>{
+const now=Date.now();
 
-const lat = position.coords.latitude;
-const lng = position.coords.longitude;
+if(now-lastSent>30000){
+lastSent=now;
 
-fetch(
-"https://script.google.com/macros/s/AKfycbwvcvZDRe5lTLvm-ElFzvsZEEHHHgSnxk_KBquwHfr1qfeo4Rm7T6-gSspukZBWd38X/exec",
-{
+fetch(SCRIPT_URL,{
 method:"POST",
 body:JSON.stringify({
-name: document.getElementById("customerName").value || "زبون",
-lat: lat,
-lng: lng
+name:document.getElementById("customerName").value||"زبون",
+lat:lat,
+lng:lng
 })
+});
 }
-);
 
-document.getElementById("result").innerHTML = `
-<p>📍 الموقع الحالي</p>
-
-<a target="_blank"
+document.getElementById("result").innerHTML=`
+<a class="mapbtn" target="_blank"
 href="https://www.google.com/maps?q=${lat},${lng}">
-فتح الموقع على الخريطة
+🗺️ فتح الموقع الحالي
 </a>
-
 <p>Latitude: ${lat}</p>
 <p>Longitude: ${lng}</p>
 `;
 
-},
-
-(error)=>{
-alert("تم رفض مشاركة الموقع");
-},
-
-{
-enableHighAccuracy:true
-}
-
-);
-
+},()=>{
+alert("يرجى السماح بالموقع");
+});
 }
 
 function updateTimer(endTime){
+const remaining=endTime-Date.now();
 
-const remaining = endTime - Date.now();
-
-if(remaining <= 0){
-
-document.getElementById("timer").innerHTML =
-"⛔ انتهت مدة التتبع";
-
-navigator.geolocation.clearWatch(watchId);
-
+if(remaining<=0){
+document.getElementById("timer").innerHTML="⛔ انتهت مدة التتبع";
+document.getElementById("status").innerHTML="🔴 متوقف";
+if(watchId) navigator.geolocation.clearWatch(watchId);
 return;
 }
 
-const h = Math.floor(remaining / 3600000);
-const m = Math.floor((remaining % 3600000) / 60000);
-const s = Math.floor((remaining % 60000) / 1000);
+const h=Math.floor(remaining/3600000);
+const m=Math.floor((remaining%3600000)/60000);
+const s=Math.floor((remaining%60000)/1000);
 
-document.getElementById("timer").innerHTML =
-`⏳ الوقت المتبقي: ${h}:${m}:${s}`;
-
+document.getElementById("timer").innerHTML=`⏳ ${h}:${m}:${s}`;
 }
-
 </script>
 
 </body>

@@ -644,10 +644,11 @@ document.getElementById("contractInfo").innerHTML =
 `رقم العقد : SH-${contractNumber}
 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
 تاريخ العقد : ${contractDate}`;
+
 document.getElementById("qrcode").innerHTML = "";
 
 new QRCode(document.getElementById("qrcode"), {
-    text: verifyUrl,
+    text: "SH-" + contractNumber,
     width: 80,
     height: 80
 });

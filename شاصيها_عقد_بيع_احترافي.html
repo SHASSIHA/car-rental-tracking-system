@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>شاصيها | عقد بيع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:Cairo,sans-serif;background:#eee}.page{max-width:210mm;margin:auto;background:#fff;padding:10mm;border:1px solid #000;position:relative}.title{text-align:center;font-size:24px;font-weight:800}.stamp{position:absolute;left:20px;top:20px;border:4px solid red;border-radius:50%;width:110px;height:110px;display:flex;align-items:center;justify-content:center;color:red;opacity:.15;transform:rotate(-20deg);font-weight:800}table{width:100%;border-collapse:collapse}td{border:1px solid #000;padding:6px}.label{background:#f5f5f5;font-weight:700;width:18%}input,textarea{width:100%;border:none;outline:none;font-family:Cairo}textarea{height:60px}.btns{text-align:center;margin-top:10px}@media print{.btns{display:none}body{background:#fff}.page{border:none}}
+</style></head><body><div class='page'><div class='stamp'>نسخة أصلية</div><div class='title'>عقد اتفاق بيع مركبة</div><p id='info'></p><div id='qrcode'></div>
+<table>
+<tr><td class='label'>اسم المالك</td><td><input></td><td class='label'>رقم المركبة</td><td><input></td></tr>
+<tr><td class='label'>VIN</td><td><input id='vin'></td><td class='label'>النوع</td><td><input id='type'></td></tr>
+<tr><td class='label'>الموديل</td><td><input id='model'></td><td class='label'>اللون</td><td><input id='color'></td></tr>
+<tr><td class='label'>مبلغ البيع</td><td><input></td><td class='label'>الواصل</td><td><input></td></tr>
+</table><h3>الملاحظات</h3><textarea></textarea><div class='btns'><button onclick='window.print()'>طباعة</button></div></div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'></script>
+<script>
+const db={"WBA43FJ03RCP87478":{type:"BMW X5",model:"2024",color:"أبيض"}};
+const d=new Date();const n=`SH-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${d.getHours()}${d.getMinutes()}`;
+document.getElementById('info').textContent='رقم العقد: '+n;
+new QRCode(document.getElementById('qrcode'),{text:n,width:80,height:80});
+vin.oninput=()=>{let v=vin.value.trim();if(v.length&&v.length!=17){vin.style.color='red'}else vin.style.color='black';if(db[v]){type.value=db[v].type;model.value=db[v].model;color.value=db[v].color;}};
+</script></body></html>

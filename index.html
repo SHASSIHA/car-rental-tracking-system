@@ -646,12 +646,8 @@ document.getElementById("contractInfo").innerHTML =
 تاريخ العقد : ${contractDate}`;
 document.getElementById("qrcode").innerHTML = "";
 
-const contractId = "SH-" + contractNumber;
-
 new QRCode(document.getElementById("qrcode"), {
-    text:
-`عقد أصلي
-رقم العقد: ${contractId}`,
+    text: verifyUrl,
     width: 80,
     height: 80
 });

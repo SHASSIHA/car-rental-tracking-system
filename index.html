@@ -649,9 +649,15 @@ const contractId = "SH-" + contractNumber;
 
 document.getElementById("qrcode").innerHTML = "";
 
+const contractId = "SH-" + contractNumber;
+
+const verifyLink =
+`verify.html?id=${encodeURIComponent(contractId)}&date=${encodeURIComponent(contractDate)}`;
+
+document.getElementById("qrcode").innerHTML = "";
+
 new QRCode(document.getElementById("qrcode"), {
-    text: `عقد أصلي
-رقم العقد: ${contractId}`,
+    text: verifyLink,
     width: 80,
     height: 80
 });

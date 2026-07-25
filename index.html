@@ -251,8 +251,7 @@ display:none;
 }
 
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script></head>
 
 <body>
 
@@ -652,11 +651,21 @@ const verifyLink =
 
 document.getElementById("qrcode").innerHTML = "";
 
-new QRCode(document.getElementById("qrcode"), {
-    text: verifyLink,
-    width: 80,
-    height: 80
-});
+QRCode.toCanvas(
+    document.createElement("canvas"),
+    verifyLink,
+    { width: 80 },
+    function (err, canvas) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        const qr = document.getElementById("qrcode");
+        qr.innerHTML = "";
+        qr.appendChild(canvas);
+    }
+);
 }
 
 generateContractInfo();

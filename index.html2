@@ -655,7 +655,7 @@ new QRCode(document.getElementById("qrcode"), {
     width: 80,
     height: 80
 });
-}
+
 document.getElementById("sellerName").addEventListener("input", function(){
     document.getElementById("sellerSign").innerText = this.value;
 });
@@ -664,6 +664,7 @@ document.getElementById("sellerName").addEventListener("input", function(){
 document.getElementById("buyerName").addEventListener("input", function(){
     document.getElementById("buyerSign").innerText = this.value;
 });
+}
 generateContractInfo();
 
 </script>

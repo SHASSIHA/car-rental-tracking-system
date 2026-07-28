@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>إدارة محطة الغسل</title>
+<title>شاصيها | محطة الغسل</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
+
 body{
 font-family:Cairo,Arial;
 background:#f2f2f2;
@@ -17,39 +20,75 @@ text-align:center;
 }
 
 .box{
-background:white;
-max-width:400px;
+background:#fff;
+max-width:420px;
 margin:auto;
-padding:20px;
-border-radius:15px;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 15px #ccc;
+}
+
+h2{
+margin-bottom:20px;
 }
 
 input,button{
+
 width:100%;
-padding:12px;
-margin:6px 0;
+padding:13px;
+margin:7px 0;
 font-size:16px;
+border-radius:10px;
+
+}
+
+input{
+border:1px solid #ccc;
 }
 
 button{
-background:#0f172a;
+
+background:#f97316;
 color:white;
 border:0;
-border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+
 }
 
-#qrcode{
-margin-top:20px;
+button:hover{
+opacity:.9;
 }
+
+
+#qrcode{
+
+margin-top:20px;
+
+}
+
+.result{
+
+margin-top:15px;
+font-weight:bold;
+
+}
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <div class="box">
 
-<h2>🚗 تسجيل سيارة جديدة</h2>
+
+<h2>
+🚗 تسجيل سيارة جديدة
+</h2>
+
 
 <input id="name" placeholder="اسم الساكن">
 
@@ -61,9 +100,15 @@ margin-top:20px;
 
 <input id="type" placeholder="نوع السيارة">
 
+
 <button onclick="createQR()">
-إنشاء QR
+
+إنشاء بطاقة السيارة QR
+
 </button>
+
+
+<div class="result" id="result"></div>
 
 
 <div id="qrcode"></div>
@@ -72,56 +117,136 @@ margin-top:20px;
 </div>
 
 
+
+
 <script>
+
 
 async function createQR(){
 
-let name=document.getElementById("name").value;
-let flat=document.getElementById("flat").value;
-let phone=document.getElementById("phone").value;
-let car=document.getElementById("car").value;
-let type=document.getElementById("type").value;
+
+let name =
+document.getElementById("name").value;
+
+
+let flat =
+document.getElementById("flat").value;
+
+
+let phone =
+document.getElementById("phone").value;
+
+
+let car =
+document.getElementById("car").value;
+
+
+let type =
+document.getElementById("type").value;
+
+
+
+if(!name || !car){
+
+alert("يرجى إدخال اسم الساكن ورقم السيارة");
+
+return;
+
+}
+
 
 
 let api =
+
 "https://script.google.com/macros/s/AKfycbyRijfuD8GhzlVp3-b3dvapDhduXNff9h0rg8lyzT1pZ9T5sy5BdPi6gtatnahGb4lF/exec";
 
 
+
 let url = api +
+
 "?action=addCar" +
+
 "&name="+encodeURIComponent(name)+
+
 "&flat="+encodeURIComponent(flat)+
+
 "&phone="+encodeURIComponent(phone)+
+
 "&car="+encodeURIComponent(car)+
+
 "&type="+encodeURIComponent(type)+
+
 "&color=";
+
 
 
 let response = await fetch(url);
 
-let result = await response.json();
+
+let data = await response.json();
 
 
-let link =
-"https://shassiha.github.io/car-rental-tracking-system/car.html?id="
-+result.memberId;
+
+if(data.status=="success"){
+
+
+
+let memberId=data.memberId;
+
+
+
+let qrLink =
+
+"https://shassiha.github.io/shassiha-wash/car.html?id="
+
++memberId;
+
 
 
 document.getElementById("qrcode").innerHTML="";
 
 
+
 new QRCode(
+
 document.getElementById("qrcode"),
+
 {
-text:link,
-width:150,
-height:150
+
+text:qrLink,
+
+width:180,
+
+height:180
+
 }
+
 );
 
 
-alert("تم إنشاء السيارة برقم: "+result.memberId);
+
+document.getElementById("result").innerHTML=
+
+"رقم العضوية: "+memberId;
+
+
+
+}else{
+
+
+alert("حدث خطأ");
 
 }
 
+
+
+}
+
+
+
 </script>
+
+
+</body>
+
+</html>

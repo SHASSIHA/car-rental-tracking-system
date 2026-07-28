@@ -156,18 +156,19 @@ async function wash(){
 
 
 let api =
-"https://script.google.com/macros/s/AKfycbwv5yHgj_--OYdVPk0uxVPtysOflgcmRSM8LY2pon_zgHjgUsxQ3PpDHK5MvqaeQzKy/exec";
+"https://script.google.com/macros/s/AKfycbyWbPTYZUm4cW95tYgi66hOASVQwlkb5WRMfo7nYrex2IEZGvHG-feinkewrXrk3UgQ/exec";
+
 
 
 let url = api +
 
-"?action=addWash"+
+"?action=addWash" +
 
-"&memberId="+id+
+"&memberId=" + id +
 
-"&car="+encodeURIComponent(data.car)+
+"&car=" + encodeURIComponent(carData.car) +
 
-"&name="+encodeURIComponent(data.name);
+"&name=" + encodeURIComponent(carData.name);
 
 
 
@@ -180,9 +181,14 @@ let result = await response.json();
 
 if(result.status=="success"){
 
-alert("تم تسجيل الغسلة بنجاح 🚿");
+alert("✅ تم تسجيل الغسلة بنجاح");
+
+}else{
+
+alert("حدث خطأ");
 
 }
+
 
 }
 

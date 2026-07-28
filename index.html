@@ -100,6 +100,42 @@ let link =
 document.getElementById("qrcode").innerHTML="";
 
 
+async function createQR(){
+
+let name=document.getElementById("name").value;
+let flat=document.getElementById("flat").value;
+let phone=document.getElementById("phone").value;
+let car=document.getElementById("car").value;
+let type=document.getElementById("type").value;
+
+
+let api =
+"https://script.google.com/macros/s/AKfycbyRijfuD8GhzlVp3-b3dvapDhduXNff9h0rg8lyzT1pZ9T5sy5BdPi6gtatnahGb4lF/exec";
+
+
+let url = api +
+"?action=addCar" +
+"&name="+encodeURIComponent(name)+
+"&flat="+encodeURIComponent(flat)+
+"&phone="+encodeURIComponent(phone)+
+"&car="+encodeURIComponent(car)+
+"&type="+encodeURIComponent(type)+
+"&color=";
+
+
+let response = await fetch(url);
+
+let result = await response.json();
+
+
+let link =
+"https://shassiha.github.io/car-rental-tracking-system/car.html?id="
++result.memberId;
+
+
+document.getElementById("qrcode").innerHTML="";
+
+
 new QRCode(
 document.getElementById("qrcode"),
 {
@@ -109,6 +145,10 @@ height:150
 }
 );
 
+
+alert("تم إنشاء السيارة برقم: "+result.memberId);
+
+}
 }
 
 </script>

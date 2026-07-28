@@ -6,14 +6,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>بيانات السيارة - محطة الغسل</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+<title>شاصيها | بيانات السيارة</title>
 
 <style>
 
 body{
-font-family:'Cairo',sans-serif;
+font-family:Cairo,Arial;
 background:#f2f2f2;
 padding:20px;
 text-align:center;
@@ -21,40 +19,35 @@ text-align:center;
 
 .box{
 background:white;
-max-width:420px;
+max-width:400px;
 margin:auto;
 padding:25px;
-border-radius:15px;
+border-radius:20px;
 box-shadow:0 5px 15px #ccc;
 }
 
-h1{
-font-size:24px;
+h2{
+color:#f97316;
 }
 
-.info{
-background:#fafafa;
-padding:15px;
-border-radius:10px;
+.data{
+text-align:right;
 line-height:2;
 font-size:18px;
 }
 
 button{
-width:100%;
-padding:12px;
-margin-top:15px;
-border:0;
-border-radius:8px;
-background:#0f172a;
-color:white;
-font-size:16px;
-font-weight:bold;
-}
 
-.success{
-color:green;
+width:100%;
+padding:14px;
+margin-top:20px;
+background:#f97316;
+color:white;
+border:0;
+border-radius:10px;
+font-size:17px;
 font-weight:bold;
+
 }
 
 </style>
@@ -67,134 +60,111 @@ font-weight:bold;
 
 <div class="box">
 
-<h1>
-🚗 شاصيها - محطة الغسل
-</h1>
+
+<h2>
+🚗 بيانات السيارة
+</h2>
 
 
-<div class="info">
-
-<div>
-اسم الساكن:
-<br>
-<b id="name"></b>
-</div>
-
-<hr>
-
-<div>
-رقم الشقة:
-<br>
-<b id="flat"></b>
-</div>
-
-<hr>
-
-<div>
-رقم السيارة:
-<br>
-<b id="car"></b>
-</div>
-
-<hr>
-
-<div>
-نوع السيارة:
-<br>
-<b id="type"></b>
-</div>
-
-<hr>
-
-<div>
-آخر غسلة:
-<br>
-<b id="lastWash">لا توجد</b>
-</div>
-
+<div id="info">
+جاري تحميل البيانات...
 </div>
 
 
-<button onclick="addWash()">
-🧽 تسجيل غسلة جديدة
+<button onclick="wash()">
+🚿 تسجيل غسلة جديدة
 </button>
 
 
-<div id="msg"></div>
-
-
 </div>
+
 
 
 
 <script>
 
 
-let params = new URLSearchParams(window.location.search);
+let params = new URLSearchParams(location.search);
 
 let id = params.get("id");
 
 
-let data = JSON.parse(
-localStorage.getItem("car_"+id)
-);
+
+let api =
+
+"https://script.google.com/macros/s/AKfycbyRijfuD8GhzlVp3-b3dvapDhduXNff9h0rg8lyzT1pZ9T5sy5BdPi6gtatnahGb4lF/exec";
 
 
-if(data){
 
-document.getElementById("name").innerText=data.name;
+async function loadCar(){
 
-document.getElementById("flat").innerText=data.flat;
 
-document.getElementById("car").innerText=data.car;
+let url = api +
 
-document.getElementById("type").innerText=data.type;
+"?action=getCar&id="
+
++id;
+
+
+
+let response = await fetch(url);
+
+
+let data = await response.json();
+
+
+
+if(data.status=="success"){
+
+
+
+document.getElementById("info").innerHTML =
+
+`
+<div class="data">
+
+<b>رقم العضوية:</b> ${data.memberId}<br>
+
+<b>اسم الساكن:</b> ${data.name}<br>
+
+<b>رقم الشقة:</b> ${data.flat}<br>
+
+<b>رقم الهاتف:</b> ${data.phone}<br>
+
+<b>السيارة:</b> ${data.car}<br>
+
+<b>النوع:</b> ${data.type}
+
+</div>
+`;
+
 
 
 }else{
 
-document.querySelector(".info").innerHTML =
-"❌ السيارة غير موجودة";
+
+document.getElementById("info").innerHTML=
+"السيارة غير موجودة";
+
 
 }
 
 
 
-function addWash(){
+}
 
 
-let now = new Date();
 
+function wash(){
 
-let date =
-now.toLocaleDateString("ar-IQ");
-
-
-localStorage.setItem(
-"wash_"+id,
-date
-);
-
-
-document.getElementById("lastWash").innerText=date;
-
-
-document.getElementById("msg").innerHTML =
-"<p class='success'>تم تسجيل الغسلة ✅</p>";
+alert("سيتم إضافة تسجيل الغسلة بالخطوة القادمة");
 
 }
 
 
 
-let last =
-localStorage.getItem("wash_"+id);
+loadCar();
 
-
-if(last){
-
-document.getElementById("lastWash").innerText=last;
-
-}
 
 
 </script>

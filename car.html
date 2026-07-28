@@ -2,32 +2,31 @@
 <html lang="ar" dir="rtl">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>شاصيها | بيانات السيارة</title>
 
 <style>
 
 body{
-font-family:Cairo,Arial;
+font-family:Cairo,Arial,sans-serif;
 background:#f2f2f2;
 padding:20px;
 text-align:center;
 }
 
 .box{
-background:white;
-max-width:400px;
+background:#fff;
+max-width:420px;
 margin:auto;
 padding:25px;
 border-radius:20px;
-box-shadow:0 5px 15px #ccc;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
 }
 
 h2{
 color:#f97316;
+margin-bottom:20px;
 }
 
 .data{
@@ -37,167 +36,162 @@ font-size:18px;
 }
 
 button{
-
 width:100%;
 padding:14px;
 margin-top:20px;
 background:#f97316;
-color:white;
+color:#fff;
 border:0;
 border-radius:10px;
 font-size:17px;
 font-weight:bold;
+cursor:pointer;
+}
 
+button:disabled{
+background:#999;
 }
 
 </style>
 
 </head>
 
-
 <body>
-
 
 <div class="box">
 
-
-<h2>
-🚗 بيانات السيارة
-</h2>
-
+<h2>🚗 بيانات السيارة</h2>
 
 <div id="info">
 جاري تحميل البيانات...
 </div>
 
-
-<button onclick="wash()">
+<button id="washBtn" onclick="wash()" disabled>
 🚿 تسجيل غسلة جديدة
 </button>
 
-
 </div>
-
-
-
 
 <script>
 
+const api =
+"https://script.google.com/macros/s/AKfycbyZAef3gfucTmU-Vf4JTqutgLNzQrT_tzkjrm55t5YMLzWxh421wF-mm3vLT0Q6gxtO/exec";
 
-let params = new URLSearchParams(location.search);
+const params = new URLSearchParams(window.location.search);
 
-let id = params.get("id");
+const memberId = params.get("id");
 
-let carData = {};
-
-
-// رابط جلب البيانات
-let api =
-"https://script.google.com/macros/s/AKfycbyWbPTYZUm4cW95tYgi66hOASVQwlkb5WRMfo7nYrex2IEZGvHG-feinkewrXrk3UgQ/exec";
-
-// تحميل بيانات السيارة
-
-async function loadWashStats(){
-
-
-let url = api +
-
-"?action=getWashStats&memberId=" + id;
-
-
-let response = await fetch(url);
-
-let data = await response.json();
-
-
-if(data.status=="success"){
-
-document.getElementById("washCount").innerHTML = data.count;
-
-document.getElementById("lastWash").innerHTML = data.lastDate || "-";
-
-}
-
-
-}
+let carData = null;
 
 
 
-// تسجيل الغسلة
+async function loadCar(){
 
-async function wash(){
+if(!memberId){
 
-
-if(!carData.car){
-
-alert("انتظر تحميل بيانات السيارة");
+document.getElementById("info").innerHTML="رقم العضوية غير موجود";
 
 return;
 
 }
 
+try{
+
+const response = await fetch(
+api + "?action=getCar&id=" + encodeURIComponent(memberId)
+);
+
+const data = await response.json();
+
+if(data.status!="success"){
+
+document.getElementById("info").innerHTML="السيارة غير موجودة";
+
+return;
+
+}
+
+carData=data;
+
+document.getElementById("info").innerHTML=`
+
+<div class="data">
+
+<b>رقم العضوية:</b> ${data.memberId}<br>
+
+<b>اسم الساكن:</b> ${data.name}<br>
+
+<b>رقم الشقة:</b> ${data.flat}<br>
+
+<b>رقم الهاتف:</b> ${data.phone}<br>
+
+<b>السيارة:</b> ${data.car}<br>
+
+<b>النوع:</b> ${data.type}
+
+</div>
+
+`;
+
+document.getElementById("washBtn").disabled=false;
+
+}catch(err){
+
+document.getElementById("info").innerHTML="تعذر الاتصال بالخادم";
+
+console.log(err);
+
+}
+
+}
 
 
-let washApi =
-"https://script.google.com/macros/s/AKfycbyZAef3gfucTmU-Vf4JTqutgLNzQrT_tzkjrm55t5YMLzWxh421wF-mm3vLT0Q6gxtO/exec";
 
-let url = washApi +
+async function wash(){
 
-"?action=addWash" +
+if(!carData) return;
 
-"&memberId=" + encodeURIComponent(carData.memberId) +
-
-"&car=" + encodeURIComponent(carData.car) +
-
-"&name=" + encodeURIComponent(carData.name);
-
-
+document.getElementById("washBtn").disabled=true;
 
 try{
 
+const response = await fetch(
 
-let response = await fetch(url);
+api +
+"?action=addWash" +
+"&memberId="+encodeURIComponent(carData.memberId) +
+"&car="+encodeURIComponent(carData.car) +
+"&name="+encodeURIComponent(carData.name)
 
+);
 
-let result = await response.json();
-
-
+const result=await response.json();
 
 if(result.status=="success"){
 
-
 alert("✅ تم تسجيل الغسلة بنجاح");
-
 
 }else{
 
-
-alert("❌ لم يتم التسجيل");
-
+alert("❌ فشل تسجيل الغسلة");
 
 }
 
-
-}
-
-catch(error){
+}catch(err){
 
 alert("حدث خطأ بالاتصال");
 
+console.log(err);
+
 }
 
+document.getElementById("washBtn").disabled=false;
 
 }
-
-
-
 
 loadCar();
-loadWashStats();
 
 </script>
 
-
 </body>
-
 </html>

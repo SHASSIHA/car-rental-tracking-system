@@ -109,10 +109,9 @@ let response = await fetch(url);
 
 let data = await response.json();
 
-
-
 if(data.status=="success"){
 
+carData = data;
 
 
 document.getElementById("info").innerHTML =

@@ -74,32 +74,6 @@ margin-top:20px;
 
 <script>
 
-function createQR(){
-
-let id = Date.now();
-
-
-let data = {
-name:document.getElementById("name").value,
-flat:document.getElementById("flat").value,
-phone:document.getElementById("phone").value,
-car:document.getElementById("car").value,
-type:document.getElementById("type").value
-};
-
-
-localStorage.setItem(
-"car_"+id,
-JSON.stringify(data)
-);
-
-
-let link =
-"https://shassiha.github.io/car-rental-tracking-system/car.html?id="+id;
-
-document.getElementById("qrcode").innerHTML="";
-
-
 async function createQR(){
 
 let name=document.getElementById("name").value;
@@ -151,6 +125,3 @@ alert("تم إنشاء السيارة برقم: "+result.memberId);
 }
 
 </script>
-
-</body>
-</html>

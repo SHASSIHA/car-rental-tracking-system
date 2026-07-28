@@ -127,10 +127,13 @@ document.getElementById("info").innerHTML=`
 
 <b>السيارة:</b> ${data.car}<br>
 
-<b>النوع:</b> ${data.type}
+<b>النوع:</b> ${data.type}<br><br>
+
+<b>🚿 عدد الغسلات:</b> <span id="washCount">جاري الحساب...</span><br>
+
+<b>📅 آخر غسلة:</b> <span id="lastWash">-</span>
 
 </div>
-
 `;
 
 document.getElementById("washBtn").disabled=false;
@@ -189,8 +192,46 @@ document.getElementById("washBtn").disabled=false;
 
 }
 
-loadCar();
+async function loadWashStats(){
 
+try{
+
+const response = await fetch(
+api + "?action=getWashStats&memberId=" + encodeURIComponent(memberId)
+);
+
+const data = await response.json();
+
+
+if(data.status=="success"){
+
+document.getElementById("washCount").innerHTML = data.count;
+
+if(data.lastDate){
+
+let date = new Date(data.lastDate);
+
+document.getElementById("lastWash").innerHTML =
+date.toLocaleDateString("ar-IQ");
+
+}else{
+
+document.getElementById("lastWash").innerHTML="-";
+
+}
+
+}
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+loadCar();
+loadWashStats();
+  
 </script>
 
 </body>

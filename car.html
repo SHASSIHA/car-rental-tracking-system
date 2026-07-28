@@ -98,15 +98,12 @@ let api =
 
 // تحميل بيانات السيارة
 
-async function loadCar(){
+async function loadWashStats(){
 
 
 let url = api +
-"?action=getCar&id=" + id;
 
-
-
-try{
+"?action=getWashStats&memberId=" + id;
 
 
 let response = await fetch(url);
@@ -114,57 +111,16 @@ let response = await fetch(url);
 let data = await response.json();
 
 
-
 if(data.status=="success"){
 
+document.getElementById("washCount").innerHTML = data.count;
 
-carData = data;
-
-
-document.getElementById("info").innerHTML =
-
-`
-<div class="data">
-
-<b>رقم العضوية:</b> ${data.memberId}<br>
-
-<b>اسم الساكن:</b> ${data.name}<br>
-
-<b>رقم الشقة:</b> ${data.flat}<br>
-
-<b>رقم الهاتف:</b> ${data.phone}<br>
-
-<b>السيارة:</b> ${data.car}<br>
-
-<b>النوع:</b> ${data.type}
-
-</div>
-`;
-
-
-
-}else{
-
-
-document.getElementById("info").innerHTML =
-"السيارة غير موجودة";
-
+document.getElementById("lastWash").innerHTML = data.lastDate || "-";
 
 }
 
 
 }
-
-catch(error){
-
-document.getElementById("info").innerHTML =
-"حدث خطأ في الاتصال";
-
-}
-
-
-}
-
 
 
 
@@ -238,7 +194,7 @@ alert("حدث خطأ بالاتصال");
 
 
 loadCar();
-
+loadWashStats();
 
 </script>
 

@@ -152,9 +152,37 @@ document.getElementById("info").innerHTML=
 
 
 
-function wash(){
+async function wash(){
 
-alert("سيتم إضافة تسجيل الغسلة بالخطوة القادمة");
+
+let api =
+"https://script.google.com/macros/s/AKfycbwv5yHgj_--OYdVPk0uxVPtysOflgcmRSM8LY2pon_zgHjgUsxQ3PpDHK5MvqaeQzKy/exec";
+
+
+let url = api +
+
+"?action=addWash"+
+
+"&memberId="+id+
+
+"&car="+encodeURIComponent(data.car)+
+
+"&name="+encodeURIComponent(data.name);
+
+
+
+let response = await fetch(url);
+
+
+let result = await response.json();
+
+
+
+if(result.status=="success"){
+
+alert("تم تسجيل الغسلة بنجاح 🚿");
+
+}
 
 }
 

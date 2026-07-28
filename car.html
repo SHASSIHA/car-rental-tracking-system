@@ -88,28 +88,36 @@ let params = new URLSearchParams(location.search);
 
 let id = params.get("id");
 
+let carData = {};
 
 
+// رابط جلب البيانات
 let api =
 "https://script.google.com/macros/s/AKfycbwv5yHgj_--OYdVPk0uxVPtysOflgcmRSM8LY2pon_zgHjgUsxQ3PpDHK5MvqaeQzKy/exec";
+
+
+
+// تحميل بيانات السيارة
 
 async function loadCar(){
 
 
 let url = api +
+"?action=getCar&id=" + id;
 
-"?action=getCar&id="
 
-+id;
 
+try{
 
 
 let response = await fetch(url);
 
-
 let data = await response.json();
 
+
+
 if(data.status=="success"){
+
 
 carData = data;
 
@@ -139,36 +147,61 @@ document.getElementById("info").innerHTML =
 }else{
 
 
-document.getElementById("info").innerHTML=
+document.getElementById("info").innerHTML =
 "السيارة غير موجودة";
 
 
 }
 
 
+}
+
+catch(error){
+
+document.getElementById("info").innerHTML =
+"حدث خطأ في الاتصال";
+
+}
+
 
 }
 
 
 
+
+// تسجيل الغسلة
+
 async function wash(){
 
 
-let api =
-"https://script.google.com/macros/s/AKfycbyWbPTYZUm4cW95tYgi66hOASVQwlkb5WRMfo7nYrex2IEZGvHG-feinkewrXrk3UgQ/exec";
+if(!carData.car){
+
+alert("انتظر تحميل بيانات السيارة");
+
+return;
+
+}
 
 
 
-let url = api +
+let washApi =
+"https://script.google.com/macros/s/AKfycbwv5yHgj_--OYdVPk0uxVPtysOflgcmRSM8LY2pon_zgHjgUsxQ3PpDHK5MvqaeQzKy/exec";
+
+
+
+let url = washApi +
 
 "?action=addWash" +
 
-"&memberId=" + id +
+"&memberId=" + encodeURIComponent(carData.memberId) +
 
 "&car=" + encodeURIComponent(carData.car) +
 
 "&name=" + encodeURIComponent(carData.name);
 
+
+
+try{
 
 
 let response = await fetch(url);
@@ -180,21 +213,34 @@ let result = await response.json();
 
 if(result.status=="success"){
 
+
 alert("✅ تم تسجيل الغسلة بنجاح");
+
 
 }else{
 
-alert("حدث خطأ");
+
+alert("❌ لم يتم التسجيل");
+
 
 }
 
 
 }
+
+catch(error){
+
+alert("حدث خطأ بالاتصال");
+
+}
+
+
+}
+
 
 
 
 loadCar();
-
 
 
 </script>

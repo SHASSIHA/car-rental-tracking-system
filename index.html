@@ -99,7 +99,16 @@ font-weight:bold;
 <input id="car" placeholder="رقم السيارة">
 
 <input id="type" placeholder="نوع السيارة">
+<label style="display:block;text-align:right;margin-top:10px;">
+📦 نوع الاشتراك
+</label>
 
+<select id="plan" style="width:100%;padding:12px;font-size:16px;margin-top:5px;">
+<option value="0">بدون اشتراك</option>
+<option value="4">اشتراك 4 غسلات</option>
+<option value="5">اشتراك 5 غسلات</option>
+<option value="6">اشتراك 6 غسلات</option>
+</select>
 
 <button onclick="createQR()">
 
@@ -144,7 +153,7 @@ document.getElementById("car").value;
 let type =
 document.getElementById("type").value;
 
-
+let plan=document.getElementById("plan").value;
 
 if(!name || !car){
 
@@ -176,9 +185,9 @@ let url = api +
 
 "&type="+encodeURIComponent(type)+
 
-"&color=";
-
-
+"&type="+encodeURIComponent(type)+
+"&color=" +
+"&plan="+plan
 
 let response = await fetch(url);
 

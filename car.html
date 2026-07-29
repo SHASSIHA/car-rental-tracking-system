@@ -2,40 +2,100 @@
 <html lang="ar" dir="rtl">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>شاصيها | بيانات السيارة</title>
 
 <style>
 
 body{
+
 font-family:Cairo,Arial,sans-serif;
 background:#f2f2f2;
 padding:20px;
 text-align:center;
+
 }
 
 .box{
+
 background:#fff;
 max-width:420px;
 margin:auto;
 padding:25px;
 border-radius:20px;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
+
 }
 
 h2{
+
 color:#f97316;
 margin-bottom:20px;
+
 }
 
 .data{
+
 text-align:right;
 line-height:2;
 font-size:18px;
+
+}
+
+.sub-box{
+
+margin-top:15px;
+padding:14px;
+border-radius:14px;
+background:#fff7ed;
+border:1px solid #fed7aa;
+text-align:right;
+font-size:16px;
+line-height:2;
+
+}
+
+.sub-box.expired{
+
+background:#fef2f2;
+border:1px solid #fecaca;
+
+}
+
+.badge{
+
+display:inline-block;
+padding:2px 10px;
+border-radius:20px;
+font-size:14px;
+font-weight:bold;
+color:#fff;
+
+}
+
+.badge.active{
+
+background:#16a34a;
+
+}
+
+.badge.expired{
+
+background:#dc2626;
+
+}
+
+.badge.none{
+
+background:#6b7280;
+
 }
 
 button{
+
 width:100%;
 padding:14px;
 margin-top:20px;
@@ -46,16 +106,38 @@ border-radius:10px;
 font-size:17px;
 font-weight:bold;
 cursor:pointer;
+
 }
 
 button:disabled{
+
 background:#999;
+
+}
+
+.msg{
+
+margin-top:12px;
+font-size:15px;
+font-weight:bold;
+
+}
+
+.msg.ok{
+
+color:#16a34a;
+
+}
+
+.msg.err{
+
+color:#dc2626;
+
 }
 
 </style>
 
 </head>
-
 <body>
 
 <div class="box">
@@ -66,9 +148,13 @@ background:#999;
 جاري تحميل البيانات...
 </div>
 
+<div id="subscriptionBox"></div>
+
 <button id="washBtn" onclick="wash()" disabled>
 🚿 تسجيل غسلة جديدة
 </button>
+
+<div class="msg" id="msg"></div>
 
 </div>
 
@@ -76,22 +162,76 @@ background:#999;
 
 const api =
 "https://script.google.com/macros/s/AKfycbyhSUO41n1mWPabPWy0yX3FbUenKBhZgrDONzDVWd3m0YhP_APInJCKJSsXjysNQ2Tn/exec";
-const params = new URLSearchParams(window.location.search);
 
+const params = new URLSearchParams(window.location.search);
 const memberId = params.get("id");
 
 let carData = null;
 
+function renderInfo(data){
 
+document.getElementById("info").innerHTML = `
+<div class="data">
+<b>رقم العضوية:</b> ${data.memberId}<br>
+<b>اسم الساكن:</b> ${data.name}<br>
+<b>رقم الشقة:</b> ${data.flat}<br>
+<b>رقم الهاتف:</b> ${data.phone}<br>
+<b>السيارة:</b> ${data.car}<br>
+<b>النوع:</b> ${data.type}
+</div>
+`;
+
+}
+
+function renderSubscription(data){
+
+const plan = Number(data.plan) || 0;
+const used = Number(data.used) || 0;
+const box = document.getElementById("subscriptionBox");
+
+if(plan <= 0){
+
+box.className = "sub-box";
+box.innerHTML = `
+<b>📦 نوع الاشتراك:</b> بدون اشتراك (دفع لكل غسلة)<br>
+<b>🚿 عدد الغسلات المسجلة:</b> <span id="washCount">...</span><br>
+<b>📅 آخر غسلة:</b> <span id="lastWash">-</span>
+`;
+
+document.getElementById("washBtn").disabled = false;
+
+return;
+
+}
+
+const remaining = plan - used;
+const isExpired = data.statusText === "منتهي" || remaining <= 0;
+
+box.className = isExpired ? "sub-box expired" : "sub-box";
+
+const badgeClass = isExpired ? "expired" : "active";
+const badgeText = isExpired ? "منتهي" : "فعال";
+
+box.innerHTML = `
+<b>📦 نوع الاشتراك:</b> ${plan} غسلات
+&nbsp; <span class="badge ${badgeClass}">${badgeText}</span><br>
+<b>✅ المستخدم:</b> ${used} من ${plan}<br>
+<b>🔢 المتبقي:</b> ${remaining > 0 ? remaining : 0} غسلة<br>
+<b>📅 بداية الاشتراك:</b> ${data.startDate || "-"}<br>
+<b>📅 نهاية الاشتراك:</b> ${data.endDate || "-"}<br>
+<b>🚿 عدد الغسلات المسجلة:</b> <span id="washCount">...</span><br>
+<b>📅 آخر غسلة:</b> <span id="lastWash">-</span>
+`;
+
+document.getElementById("washBtn").disabled = isExpired;
+
+}
 
 async function loadCar(){
 
 if(!memberId){
-
-document.getElementById("info").innerHTML="رقم العضوية غير موجود";
-
+document.getElementById("info").innerHTML = "رقم العضوية غير موجود";
 return;
-
 }
 
 try{
@@ -102,92 +242,22 @@ api + "?action=getCar&id=" + encodeURIComponent(memberId)
 
 const data = await response.json();
 
-if(data.status!="success"){
-
-document.getElementById("info").innerHTML="السيارة غير موجودة";
-
+if(data.status != "success"){
+document.getElementById("info").innerHTML = "السيارة غير موجودة";
 return;
-
 }
 
-carData=data;
+carData = data;
 
-document.getElementById("info").innerHTML=`
-
-<div class="data">
-
-<b>رقم العضوية:</b> ${data.memberId}<br>
-
-<b>اسم الساكن:</b> ${data.name}<br>
-
-<b>رقم الشقة:</b> ${data.flat}<br>
-
-<b>رقم الهاتف:</b> ${data.phone}<br>
-
-<b>السيارة:</b> ${data.car}<br>
-
-<b>النوع:</b> ${data.type}<br><br>
-
-<b>🚿 عدد الغسلات:</b> <span id="washCount">جاري الحساب...</span><br>
-
-<b>📅 آخر غسلة:</b> <span id="lastWash">-</span>
-
-</div>
-`;
-
-document.getElementById("washBtn").disabled=false;
+renderInfo(data);
+renderSubscription(data);
 
 }catch(err){
 
-document.getElementById("info").innerHTML="تعذر الاتصال بالخادم";
-
+document.getElementById("info").innerHTML = "تعذر الاتصال بالخادم";
 console.log(err);
 
 }
-
-}
-
-
-
-async function wash(){
-
-if(!carData) return;
-
-document.getElementById("washBtn").disabled=true;
-
-try{
-
-const response = await fetch(
-
-api +
-"?action=addWash" +
-"&memberId="+encodeURIComponent(carData.memberId) +
-"&car="+encodeURIComponent(carData.car) +
-"&name="+encodeURIComponent(carData.name)
-
-);
-
-const result=await response.json();
-
-if(result.status=="success"){
-
-alert("✅ تم تسجيل الغسلة بنجاح");
-
-}else{
-
-alert("❌ فشل تسجيل الغسلة");
-
-}
-
-}catch(err){
-
-alert("حدث خطأ بالاتصال");
-
-console.log(err);
-
-}
-
-document.getElementById("washBtn").disabled=false;
 
 }
 
@@ -201,21 +271,21 @@ api + "?action=getWashStats&memberId=" + encodeURIComponent(memberId)
 
 const data = await response.json();
 
+if(data.status == "success"){
 
-if(data.status=="success"){
+const countEl = document.getElementById("washCount");
+const lastEl = document.getElementById("lastWash");
 
-document.getElementById("washCount").innerHTML = data.count;
+if(countEl) countEl.innerHTML = data.count;
+
+if(lastEl){
 
 if(data.lastDate){
-
 let date = new Date(data.lastDate);
-
-document.getElementById("lastWash").innerHTML =
-date.toLocaleDateString("ar-IQ");
-
+lastEl.innerHTML = date.toLocaleDateString("ar-IQ");
 }else{
-
-document.getElementById("lastWash").innerHTML="-";
+lastEl.innerHTML = "-";
+}
 
 }
 
@@ -228,9 +298,70 @@ console.log(error);
 }
 
 }
+
+function showMessage(text, isOk){
+
+const msg = document.getElementById("msg");
+msg.className = "msg " + (isOk ? "ok" : "err");
+msg.innerText = text;
+
+setTimeout(()=>{
+msg.innerText = "";
+msg.className = "msg";
+}, 4000);
+
+}
+
+async function wash(){
+
+if(!carData) return;
+
+const btn = document.getElementById("washBtn");
+btn.disabled = true;
+
+try{
+
+const response = await fetch(
+api +
+"?action=addWash" +
+"&memberId=" + encodeURIComponent(carData.memberId) +
+"&car=" + encodeURIComponent(carData.car) +
+"&name=" + encodeURIComponent(carData.name)
+);
+
+const result = await response.json();
+
+if(result.status == "success"){
+
+showMessage("✅ تم تسجيل الغسلة بنجاح", true);
+
+// تحديث تلقائي للبيانات (اشتراك + إحصائيات) بدون إعادة فتح الصفحة
+await loadCar();
+await loadWashStats();
+
+}else{
+
+showMessage("❌ " + (result.message || "فشل تسجيل الغسلة"), false);
+
+// إعادة تحميل بيانات الاشتراك عشان تنعكس حالة "منتهي" إذا كانت هذي السبب
+await loadCar();
+
+}
+
+}catch(err){
+
+showMessage("حدث خطأ بالاتصال", false);
+console.log(err);
+btn.disabled = false;
+
+}
+
+}
+
 loadCar().then(()=>{
-  loadWashStats();
+loadWashStats();
 });
+
 </script>
 
 </body>

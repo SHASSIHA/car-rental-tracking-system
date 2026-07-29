@@ -229,9 +229,9 @@ console.log(error);
 }
 
 }
-loadCar();
-loadWashStats();
-  
+loadCar().then(()=>{
+  loadWashStats();
+});
 </script>
 
 </body>

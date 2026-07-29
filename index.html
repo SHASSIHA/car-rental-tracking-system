@@ -134,27 +134,13 @@ font-weight:bold;
 async function createQR(){
 
 
-let name =
-document.getElementById("name").value;
-
-
-let flat =
-document.getElementById("flat").value;
-
-
-let phone =
-document.getElementById("phone").value;
-
-
-let car =
-document.getElementById("car").value;
-
-
-let type =
-document.getElementById("type").value;
-
+let name=document.getElementById("name").value;
+let flat=document.getElementById("flat").value;
+let phone=document.getElementById("phone").value;
+let car=document.getElementById("car").value;
+let type=document.getElementById("type").value;
 let plan=document.getElementById("plan").value;
-
+  
 if(!name || !car){
 
 alert("يرجى إدخال اسم الساكن ورقم السيارة");
@@ -168,8 +154,6 @@ return;
 let api =
 
 "https://script.google.com/macros/s/AKfycbyRijfuD8GhzlVp3-b3dvapDhduXNff9h0rg8lyzT1pZ9T5sy5BdPi6gtatnahGb4lF/exec";
-
-
 
 let url = api +
 
@@ -188,6 +172,7 @@ let url = api +
 "&color=" +
 
 "&plan="+encodeURIComponent(plan);
+  
 let response = await fetch(url);
 
 

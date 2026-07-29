@@ -185,10 +185,9 @@ let url = api +
 
 "&type="+encodeURIComponent(type)+
 
-"&type="+encodeURIComponent(type)+
 "&color=" +
-"&plan="+plan
 
+"&plan="+encodeURIComponent(plan);
 let response = await fetch(url);
 
 

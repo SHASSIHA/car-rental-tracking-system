@@ -515,8 +515,8 @@ welcome + " أيهم";
 
 // رابط الـ API
 
-const api = 
-"https://ضع_رابط_API_هنا";
+const api =
+"https://script.google.com/macros/s/AKfycbyhSUO41n1mWPabPWy0yX3FbUenKBhZgrDONzDVWd3m0YhP_APInJCKJSsXjysNQ2Tn/exec";
 
 
 
@@ -526,30 +526,94 @@ const api =
 
 async function loadDashboard(){
 
-
 try{
 
 
-// هنا نربط الإحصائيات مع Google Sheets
+let response = await fetch(
+api + "?action=getDashboard"
+);
 
 
-console.log("Dashboard Ready");
+let data = await response.json();
 
+
+
+if(data.status=="success"){
+
+
+
+document.getElementById("totalMembers").innerHTML =
+data.totalMembers;
+
+
+
+document.getElementById("todayWash").innerHTML =
+data.todayWash;
+
+
+
+document.getElementById("expired").innerHTML =
+data.expired;
+
+
+
+// آخر الغسلات
+
+let table =
+document.getElementById("washTable");
+
+
+table.innerHTML = `
+
+<tr>
+
+<th>العضوية</th>
+
+<th>الاسم</th>
+
+<th>السيارة</th>
+
+<th>التاريخ</th>
+
+</tr>
+
+`;
+
+
+
+data.lastWash.forEach(function(item){
+
+
+table.innerHTML += `
+
+<tr>
+
+<td>${item.memberId}</td>
+
+<td>${item.name}</td>
+
+<td>${item.car}</td>
+
+<td>${item.date}</td>
+
+</tr>
+
+`;
+
+});
+
+
+}
 
 
 }catch(error){
 
-
 console.log(error);
 
-
 }
 
 
-
 }
-
-
 
 
 // البحث

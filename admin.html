@@ -719,6 +719,13 @@ table.innerHTML += `
 </a>
 
 </td>
+<td>
+
+<button onclick="renew('${item.memberId}')">
+🔄 تجديد
+</button>
+
+</td>
 </tr>
 
 `;
@@ -726,7 +733,54 @@ table.innerHTML += `
 });
 
 }
+function renew(memberId){
 
+let plan = prompt(
+"اكتب عدد الغسلات الجديدة (4 أو 5 أو 6)"
+);
+
+
+if(!plan){
+return;
+}
+
+
+fetch(
+api +
+"?action=renewSubscription" +
+"&memberId=" +
+memberId +
+"&plan=" +
+plan
+)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+
+if(data.status=="success"){
+
+
+alert("تم تجديد الاشتراك بنجاح ✅");
+
+
+loadMembers();
+
+
+}else{
+
+
+alert("حدث خطأ");
+
+
+}
+
+
+});
+
+
+}
 loadDashboard();
 loadMembers();
 

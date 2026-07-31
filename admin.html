@@ -708,8 +708,21 @@ table.innerHTML += `
 
 <td>${item.remaining}</td>
 
-<td>${item.status}</td>
+<td>
 
+<span style="
+padding:6px 12px;
+border-radius:20px;
+font-weight:bold;
+color:white;
+background:${item.status=="فعال" ? "#16a34a" : "#dc2626"};
+">
+
+${item.status}
+
+</span>
+
+</td>
 <td>
 
 <a href="https://shassiha.github.io/shassiha-wash/car.html?id=${item.memberId}" target="_blank">

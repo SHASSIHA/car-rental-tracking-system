@@ -656,12 +656,67 @@ row.style.display="none";
 
 });
 
+async function loadMembers(){
 
+let response = await fetch(
+api + "?action=getMembers"
+);
 
+let data = await response.json();
 
+if(data.status!="success") return;
+
+let table =
+document.getElementById("membersTable");
+
+table.innerHTML = `
+
+<tr>
+
+<th>العضوية</th>
+
+<th>الاسم</th>
+
+<th>السيارة</th>
+
+<th>الاشتراك</th>
+
+<th>المتبقي</th>
+
+<th>الحالة</th>
+
+</tr>
+
+`;
+
+data.members.forEach(function(item){
+
+table.innerHTML += `
+
+<tr>
+
+<td>${item.memberId}</td>
+
+<td>${item.name}</td>
+
+<td>${item.car}</td>
+
+<td>${item.plan}</td>
+
+<td>${item.remaining}</td>
+
+<td>${item.status}</td>
+
+</tr>
+
+`;
+
+});
+
+}
 
 loadDashboard();
-
+loadMembers();
 
 </script>
 

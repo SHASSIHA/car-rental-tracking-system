@@ -134,6 +134,26 @@ color:#16a34a;
 color:#dc2626;
 
 }
+  @media print{
+
+body{
+background:white;
+padding:0;
+}
+
+button,
+.msg{
+display:none !important;
+}
+
+.box{
+
+box-shadow:none;
+border-radius:0;
+
+}
+
+}
 
 </style>
 
@@ -154,6 +174,11 @@ color:#dc2626;
 🚿 تسجيل غسلة جديدة
 </button>
 
+<button id="printBtn" onclick="printCard()">
+🖨️ طباعة البطاقة
+</button>
+
+<div class="msg" id="msg"></div>
 <div class="msg" id="msg"></div>
 
 </div>
@@ -362,6 +387,22 @@ loadCar().then(()=>{
 loadWashStats();
 });
 
+  function printCard(){
+
+document.getElementById("printBtn").style.display="none";
+document.getElementById("washBtn").style.display="none";
+
+window.print();
+
+setTimeout(()=>{
+
+document.getElementById("printBtn").style.display="block";
+document.getElementById("washBtn").style.display="block";
+
+},500);
+
+}
+  
 </script>
 
 </body>

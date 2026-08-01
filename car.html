@@ -134,56 +134,63 @@ color:#16a34a;
 color:#dc2626;
 
 }
-  @media print{
 
-body{
-background:white;
-padding:0;
-}
-
-button,
-.msg{
-display:none !important;
-}
-
-.box{
-
-box-shadow:none;
-border-radius:0;
-
-}
-
-}
-@media print {
+  @media print {
 
 @page {
-    size: A6;
-    margin: 5mm;
+    size: A6 portrait;
+    margin: 8mm;
 }
 
 body {
-    background: white;
-    padding: 0;
+    background:white;
+    padding:0;
+    direction:rtl;
 }
 
 .box {
-    width: 100%;
-    max-width: none;
-    box-shadow: none;
-    border-radius: 10px;
+
+width:100%;
+max-width:100%;
+padding:15px;
+margin:0;
+box-shadow:none;
+border-radius:15px;
+
+}
+
+h2 {
+
+font-size:20px;
+margin-bottom:10px;
+
+}
+
+.data {
+
+font-size:14px;
+line-height:1.8;
+text-align:right;
+
+}
+
+.sub-box {
+
+font-size:13px;
+line-height:1.7;
+padding:10px;
+margin-top:10px;
+
 }
 
 button,
 .msg {
-    display: none !important;
-}
 
-h2 {
-    color: #f97316;
-}
+display:none !important;
 
 }
 
+}
   
 </style>
 

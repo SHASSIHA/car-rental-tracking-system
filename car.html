@@ -155,6 +155,36 @@ border-radius:0;
 
 }
 
+  @media print {
+
+@page {
+    size: A6;
+    margin: 5mm;
+}
+
+body {
+    background: white;
+    padding: 0;
+}
+
+.box {
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+    border-radius: 10px;
+}
+
+button,
+.msg {
+    display: none !important;
+}
+
+h2 {
+    color: #f97316;
+}
+
+}
+  
 </style>
 
 </head>

@@ -350,7 +350,7 @@ let response = await fetch(
 api + "?" + new URLSearchParams(data)
 );
 
-
+let result = await response.json();
 
 if(result.status=="success"){
 

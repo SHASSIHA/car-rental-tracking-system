@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>شاصيها | إضافة مشترك</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Cairo',sans-serif;
+background:#f3f4f6;
+margin:0;
+padding:20px;
+
+}
+
+
+.container{
+
+max-width:450px;
+margin:auto;
+
+}
+
+
+.box{
+
+background:white;
+padding:25px;
+border-radius:22px;
+box-shadow:0 5px 20px #ddd;
+
+}
+
+
+.header{
+
+background:linear-gradient(135deg,#f97316,#ea580c);
+color:white;
+padding:20px;
+border-radius:18px;
+text-align:center;
+margin-bottom:20px;
+
+}
+
+
+.header h1{
+
+margin:0;
+font-size:25px;
+
+}
+
+
+.header p{
+
+margin:5px 0 0;
+font-size:14px;
+
+}
+
+
+label{
+
+display:block;
+font-weight:bold;
+font-size:14px;
+margin-top:14px;
+margin-bottom:5px;
+
+}
+
+
+input,select{
+
+width:100%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:10px;
+font-family:'Cairo',sans-serif;
+font-size:15px;
+outline:none;
+
+}
+
+
+input:focus,
+select:focus{
+
+border-color:#f97316;
+
+}
+
+
+
+button{
+
+width:100%;
+padding:14px;
+margin-top:25px;
+background:#f97316;
+color:white;
+border:0;
+border-radius:12px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+
+}
+
+
+button:hover{
+
+opacity:.9;
+
+}
+
+
+.msg{
+
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+font-size:15px;
+
+}
+
+
+.success{
+
+color:#16a34a;
+
+}
+
+
+.error{
+
+color:#dc2626;
+
+}
+
+
+.back{
+
+display:block;
+text-align:center;
+margin-top:15px;
+color:#555;
+text-decoration:none;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<div class="box">
+
+
+<div class="header">
+
+<h1>🚗 شاصيها</h1>
+
+<p>إضافة مشترك جديد للمغسلة</p>
+
+</div>
+
+
+<label>اسم المشترك</label>
+
+<input id="name" placeholder="اكتب الاسم">
+
+
+<label>رقم الهاتف</label>
+
+<input id="phone" placeholder="07xxxxxxxxx" inputmode="numeric">
+
+
+<label>رقم الشقة</label>
+
+<input id="flat" placeholder="رقم الشقة">
+
+
+<label>السيارة</label>
+
+<input id="car" placeholder="مثال: تويوتا كامري">
+
+
+<label>نوع السيارة</label>
+
+<input id="type" placeholder="مثال: سيدان">
+
+
+<label>اللون</label>
+
+<input id="color" placeholder="لون السيارة">
+
+
+<label>نوع الاشتراك</label>
+
+<select id="plan">
+
+<option value="0">
+بدون اشتراك
+</option>
+
+<option value="4">
+4 غسلات
+</option>
+
+<option value="5">
+5 غسلات
+</option>
+
+<option value="6">
+6 غسلات
+</option>
+
+<option value="8">
+8 غسلات
+</option>
+
+<option value="12">
+12 غسلة
+</option>
+
+</select>
+<br>
+
+<button onclick="saveMember()">
+💾 حفظ المشترك
+</button>
+
+
+<div id="msg" class="msg"></div>
+
+
+<a class="back" href="https://shassiha.github.io/shassiha-wash/admin.html">
+⬅️ الرجوع للوحة الإدارة
+</a>
+
+
+</div>
+
+</div>
+
+
+
+<script>
+
+
+const api =
+"https://script.google.com/macros/s/AKfycbyhSUO41n1mWPabPWy0yX3FbUenKBhZgrDONzDVWd3m0YhP_APInJCKJSsXjysNQ2Tn/exec";
+
+
+
+function showMsg(text,type){
+
+
+let msg = document.getElementById("msg");
+
+msg.innerText = text;
+
+msg.className = "msg " + type;
+
+
+}
+
+
+
+async function saveMember(){
+
+
+let data = {
+
+
+action:"addMember",
+
+
+name:
+document.getElementById("name").value.trim(),
+
+
+phone:
+document.getElementById("phone").value.trim(),
+
+
+flat:
+document.getElementById("flat").value.trim(),
+
+
+car:
+document.getElementById("car").value.trim(),
+
+
+type:
+document.getElementById("type").value.trim(),
+
+
+color:
+document.getElementById("color").value.trim(),
+
+
+plan:
+document.getElementById("plan").value
+
+
+};
+
+
+
+if(!data.name || !data.car){
+
+
+showMsg(
+"يرجى كتابة الاسم والسيارة",
+"error"
+);
+
+return;
+
+}
+
+
+
+try{
+
+
+let response = await fetch(
+api,
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+
+body:new URLSearchParams(data)
+
+}
+);
+
+
+
+let result = await response.json();
+
+
+
+if(result.status=="success"){
+
+
+showMsg(
+"✅ تمت إضافة المشترك بنجاح",
+"success"
+);
+
+
+
+setTimeout(()=>{
+
+
+window.location.href =
+"https://shassiha.github.io/shassiha-wash/admin.html";
+
+
+},1500);
+
+
+
+}else{
+
+
+showMsg(
+"❌ حدث خطأ أثناء الحفظ",
+"error"
+);
+
+
+}
+
+
+
+}catch(error){
+
+
+console.log(error);
+
+
+showMsg(
+"❌ تعذر الاتصال بالخادم",
+"error"
+);
+
+
+}
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>

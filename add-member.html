@@ -354,8 +354,6 @@ api + "?" + new URLSearchParams(data)
 
 let result = await response.json();
 
-
-
 if(result.status=="success"){
 
 
@@ -365,15 +363,19 @@ showMsg(
 );
 
 
-
 setTimeout(()=>{
 
 
 window.location.href =
-"https://shassiha.github.io/shassiha-wash/admin.html";
+"https://shassiha.github.io/shassiha-wash/print.html?id="
++ result.memberId;
 
 
 },1500);
+
+
+}
+
 
 
 

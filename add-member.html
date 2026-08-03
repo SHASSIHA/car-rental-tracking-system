@@ -352,8 +352,6 @@ api + "?" + new URLSearchParams(data)
 
 
 
-let result = await response.json();
-
 if(result.status=="success"){
 
 
@@ -363,9 +361,7 @@ showMsg(
 );
 
 
-
 let memberId = result.memberId;
-
 
 
 document.getElementById("result").innerHTML = `
@@ -378,7 +374,6 @@ margin-top:20px;
 text-align:center;
 font-weight:bold;
 ">
-
 
 🔢 رقم العضوية
 
@@ -416,31 +411,21 @@ cursor:pointer;
 
 </a>
 
-
 </div>
 
 `;
 
-}
 
 setTimeout(()=>{
 
-
 window.location.href =
 "https://shassiha.github.io/shassiha-wash/card.html?id="
-+ result.memberId;
-
++ memberId;
 
 },1500);
 
 
-}
-
-
-
-
-else{
-
+}else{
 
 showMsg(
 "❌ حدث خطأ أثناء الحفظ",

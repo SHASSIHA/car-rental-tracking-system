@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>بطاقة شاصيها</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+
+font-family:'Cairo',sans-serif;
+background:#eee;
+padding:20px;
+margin:0;
+
+}
+
+
+.card{
+
+width:350px;
+min-height:210px;
+background:white;
+margin:auto;
+border-radius:20px;
+padding:20px;
+box-shadow:0 5px 20px #bbb;
+border-top:8px solid #f97316;
+
+}
+
+
+.logo{
+
+text-align:center;
+font-size:28px;
+font-weight:800;
+color:#f97316;
+
+}
+
+
+.title{
+
+text-align:center;
+font-size:15px;
+color:#555;
+margin-bottom:15px;
+
+}
+
+
+.info{
+
+background:#fff7ed;
+border-radius:15px;
+padding:12px;
+line-height:2;
+font-size:16px;
+
+}
+
+
+.qr{
+
+text-align:center;
+margin-top:15px;
+
+}
+
+
+.qr img{
+
+width:110px;
+
+}
+
+
+.print{
+
+display:block;
+margin:20px auto;
+padding:12px 30px;
+background:#f97316;
+color:white;
+border:0;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+
+}
+
+
+
+@media print{
+
+body{
+
+background:white;
+
+}
+
+
+.print{
+
+display:none;
+
+}
+
+
+.card{
+
+box-shadow:none;
+
+}
+
+}
+
+
+</style>
+
+
+</head>
+
+<body>
+
+
+<div class="card">
+
+
+<div class="logo">
+🚗 شاصيها
+</div>
+
+
+<div class="title">
+بطاقة اشتراك مغسلة السيارات
+</div>
+
+
+<div class="info" id="info">
+
+جاري تحميل البيانات...
+
+</div>
+
+
+<div class="qr" id="qr"></div>
+
+
+</div>
+
+
+<button class="print" onclick="window.print()">
+🖨️ طباعة البطاقة
+</button>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+
+
+const api =
+"https://script.google.com/macros/s/AKfycbyhSUO41n1mWPabPWy0yX3FbUenKBhZgrDONzDVWd3m0YhP_APInJCKJSsXjysNQ2Tn/exec";
+
+
+
+// قراءة رقم العضوية من الرابط
+
+const params = new URLSearchParams(window.location.search);
+
+const memberId = params.get("id");
+
+
+
+
+
+async function loadCard(){
+
+
+if(!memberId){
+
+
+document.getElementById("info").innerHTML =
+"رقم العضوية غير موجود";
+
+
+return;
+
+}
+
+
+
+try{
+
+
+let response = await fetch(
+
+api + "?action=getCar&id=" + encodeURIComponent(memberId)
+
+);
+
+
+
+let data = await response.json();
+
+
+
+if(data.status!="success"){
+
+
+document.getElementById("info").innerHTML =
+"لم يتم العثور على العضوية";
+
+
+return;
+
+
+}
+
+
+
+
+
+document.getElementById("info").innerHTML = `
+
+<b>🔢 رقم العضوية:</b> ${data.memberId}<br>
+
+<b>👤 الاسم:</b> ${data.name}<br>
+
+<b>🚗 السيارة:</b> ${data.car}<br>
+
+<b>📦 الاشتراك:</b> ${data.plan > 0 ? data.plan+" غسلات" : "دفع مباشر"}
+
+`;
+
+
+
+
+
+// رابط التحقق الذي يفتح بيانات السيارة
+
+let verifyLink =
+
+"https://shassiha.github.io/shassiha-wash/car.html?id="
+
++ encodeURIComponent(data.memberId);
+
+
+
+
+
+// إنشاء QR
+
+document.getElementById("qr").innerHTML="";
+
+
+new QRCode(
+
+document.getElementById("qr"),
+
+{
+
+text:verifyLink,
+
+width:110,
+
+height:110
+
+}
+
+);
+
+
+
+}catch(error){
+
+
+console.log(error);
+
+
+document.getElementById("info").innerHTML =
+"حدث خطأ بالاتصال";
+
+
+}
+
+
+
+}
+
+
+
+loadCard();
+
+
+</script>
+
+
+</body>
+
+</html>

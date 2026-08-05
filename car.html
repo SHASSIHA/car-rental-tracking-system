@@ -392,16 +392,55 @@ api +
 );
 
 const result = await response.json();
-
 if(result.status == "success"){
 
 showMessage("✅ تم تسجيل الغسلة بنجاح", true);
 
-// تحديث تلقائي للبيانات (اشتراك + إحصائيات) بدون إعادة فتح الصفحة
+// تحديث البيانات أولاً
 await loadCar();
 await loadWashStats();
 
-}else{
+// حساب المتبقي
+let remaining = (Number(carData.plan) || 0) - (result.used || 0);
+if(remaining < 0) remaining = 0;
+
+// تنسيق التاريخ
+let today = new Date().toLocaleDateString("ar-IQ");
+
+// تنظيف رقم الهاتف (إزالة + أو فراغات)
+let phone = String(carData.phone || "")
+.replace(/\D/g, "");
+
+// إذا الرقم يبدأ بـ 07 نحوله إلى 9647
+if(phone.startsWith("07")){
+phone = "964" + phone.substring(1);
+}
+
+// نص الرسالة
+let text =
+`🚗 شاصيها | مغسلة السيارات
+
+السلام عليكم ${carData.name}،
+
+تم تسجيل غسلة جديدة لسيارتكم بنجاح.
+
+📅 التاريخ: ${today}
+🚿 المتبقي من الاشتراك: ${remaining} غسلات
+📆 نهاية الاشتراك: ${carData.endDate || "-"}
+
+شكراً لاختياركم شاصيها 🌟`;
+
+// فتح واتساب برسالة جاهزة
+if(phone){
+window.open(
+`https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+'_blank'
+);
+}
+
+}
+
+  else{
 
 showMessage("❌ " + (result.message || "فشل تسجيل الغسلة"), false);
 
